@@ -1,10 +1,7 @@
 ---
-import Layout from "../Layout.astro";
-import ArticleOverview from "../components/article/ArticleOverview";
-import TagSidebar from "../components/tags/TagSidebar.astro";
-
+import Layout from "../../Layout.astro";
+import TagSidebar from "../tags/TagSidebar.astro";
 const pageTitle = "Conduit - Home";
-const filter = Astro.url.searchParams.get("filter") as string;
 ---
 
 <Layout pageTitle={pageTitle}>
@@ -14,10 +11,10 @@ const filter = Astro.url.searchParams.get("filter") as string;
         <h1 class="logo-font">conduit</h1>
         <p>A place to share your knowledge.</p>
       </div>
-    </div>
+    </div>   
     <div class="container page">
       <div class="row">
-        <ArticleOverview client:load filter={filter} />
+        <slot />
         <TagSidebar />
       </div>
     </div>

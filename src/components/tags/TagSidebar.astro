@@ -1,0 +1,27 @@
+---
+import { getTags } from "../../services/article-service";
+
+const tags = await getTags();
+---
+
+<div class="col-md-3">
+  <div class="sidebar">
+    <p>Popular Tags</p>
+    <div class="tag-list">
+      {
+        tags ? (
+          tags.map((tag: string) => (
+            <a class="tag-pill tag-default" style={{ cursor: "pointer" }} href={`/?filter=${tag}`}>
+              {tag}
+            </a>
+          ))
+        ) : (
+          <>
+            <div>An Error occured</div>
+            <a href={"/"}>Please retry</a>
+          </>
+        )
+      }
+    </div>
+  </div>
+</div>
