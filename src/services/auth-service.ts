@@ -1,7 +1,7 @@
-import { BASE_URL } from "~/common/api";
-import { setHeaders } from "~/common/headers";
-import type { LoginCredentials, RegisterCredentials } from "~/models/auth";
-import type { UpdateUser, UserData } from "~/models/user";
+import { BASE_URL } from "../common/api";
+import { setHeaders } from "../common/headers";
+import type { LoginCredentials, RegisterCredentials } from "../models/auth";
+import type { UpdateUser, UserData } from "../models/user";
 
 export async function login(credentials: LoginCredentials) {
   return fetch(`${BASE_URL}/users/login`, {

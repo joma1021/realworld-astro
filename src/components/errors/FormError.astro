@@ -1,0 +1,18 @@
+---
+export interface FormErrorProps {
+  errors: { [key: string]: string[] };
+}
+const { errors } = Astro.props as FormErrorProps;
+---
+
+<ul class="error-messages">
+  {
+    Object.entries(errors).map(([field, fieldErrors]) =>
+      fieldErrors.map((fieldError) => (
+        <li>
+          {field} {fieldError}
+        </li>
+      ))
+    )
+  }
+</ul>

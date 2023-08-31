@@ -1,4 +1,5 @@
 import type { ArticlesDTO } from "../../models/article";
+import type { UserSessionData } from "../../models/user";
 import { getGlobalArticles, getYourArticles } from "../../services/article-service";
 import ArticlePreview from "./ArticlePreview";
 import { useEffect, useErrorBoundary, useState } from "preact/hooks";
@@ -8,21 +9,25 @@ interface ArticleOverviewState {
   hasError: boolean;
 }
 
-export default function ArticleOverview({ filter }: { filter: string }) {
-  const feedFilter = filter ?? "global";
+export default function ArticleOverview({ filter, userSession }: { filter: string; userSession: UserSessionData }) {
+  const feedFilter = filter ?? (userSession.isLoggedIn ? "your" : "global");
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [articlesState, setState] = useState<ArticleOverviewState>({ articles: null, hasError: false });
 
   const fetchArticles = async () => {
+    // TODO: Keep in mind
+    // Keeping token in JS is not secure. A better solution is setting up a proxy server
+    const token = userSession.token;
+
     if (feedFilter === "global") {
-      const articles = await getGlobalArticles("", page);
+      const articles = await getGlobalArticles(token, page);
       setState({ articles: articles, hasError: false });
     } else if (feedFilter === "your") {
-      const articles = await getYourArticles("", page);
+      const articles = await getYourArticles(token, page);
       setState({ articles: articles, hasError: false });
     } else {
-      const articles = await getGlobalArticles("", page, feedFilter);
+      const articles = await getGlobalArticles(token, page, feedFilter);
       setState({ articles: articles, hasError: false });
     }
   };
@@ -38,11 +43,13 @@ export default function ArticleOverview({ filter }: { filter: string }) {
     <div class="col-md-9">
       <div class="feed-toggle">
         <ul class="nav nav-pills outline-active">
-          <li class="nav-item">
-            <a class={`nav-link ${feedFilter === "your" ? "active" : ""}`} href="/?filter=your">
-              Your Feed
-            </a>
-          </li>
+          {userSession.isLoggedIn && (
+            <li class="nav-item">
+              <a class={`nav-link ${feedFilter === "your" ? "active" : ""}`} href="/?filter=your">
+                Your Feed
+              </a>
+            </li>
+          )}
           <li class="nav-item">
             <a class={`nav-link ${feedFilter === "global" ? "active" : ""}`} href="/?filter=global">
               Global Feed

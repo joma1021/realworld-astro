@@ -1,6 +1,59 @@
 ---
 import Layout from "../../Layout.astro";
+import { validateInput } from "../../common/helpers";
+import type { LoginCredentials } from "../../models/auth";
+import { login } from "../../services/auth-service";
+import FormError from "../../components/errors/FormError.astro";
+import { setSessionCookies } from "../../services/session-service";
 const pageTitle = "Conduit - Login";
+
+interface LoginError {
+  errors: { [key: string]: string[] } | null;
+}
+
+const hasError: LoginError = { errors: null };
+if (Astro.request.method === "POST") {
+  try {
+    const formData = await Astro.request.formData();
+    const email = formData.get("email");
+    const password = formData.get("password");
+
+    if (!validateInput(email)) {
+      hasError.errors = { "": ["email can't be blank"] };
+    }
+
+    if (!validateInput(password)) {
+      hasError.errors = { "": ["password can't be blank"] };
+    }
+    const credentials: LoginCredentials = {
+      email: email as string,
+      password: password as string,
+    };
+
+    const response = await login(credentials);
+
+    if (!response.ok) {
+      if (response.status == 403 || response.status == 422) {
+        const data = await response.json();
+        data.status == "error" ? (hasError.errors = { ["Error: "]: [data.message] }) : (hasError.errors = data.errors);
+      } else {
+        hasError.errors = { [""]: ["Unknown error"] };
+      }
+    } else {
+      const data = await response.json();
+      setSessionCookies({
+        username: data.user.username,
+        authToken: data.user.token,
+        image: data.user.image,
+        cookies: Astro.cookies,
+      });
+      console.log("Login successful");
+      return Astro.redirect("/");
+    }
+  } catch (error) {
+    hasError.errors = { "": ["Unknown error"] };
+  }
+}
 ---
 
 <Layout pageTitle={pageTitle}>
@@ -13,18 +66,16 @@ const pageTitle = "Conduit - Login";
             <a href="/register">Need an account?</a>
           </p>
 
-          <ul class="error-messages">
-            <li>That email is already taken</li>
-          </ul>
+          {hasError.errors && <FormError errors={hasError.errors} />}
 
-          <form>
+          <form method="post">
             <fieldset class="form-group">
-              <input class="form-control form-control-lg" type="text" placeholder="Email" />
+              <input class="form-control form-control-lg" type="text" name="email" placeholder="Email" />
             </fieldset>
             <fieldset class="form-group">
-              <input class="form-control form-control-lg" type="password" placeholder="Password" />
+              <input class="form-control form-control-lg" type="password" name="password" placeholder="Password" />
             </fieldset>
-            <button class="btn btn-lg btn-primary pull-xs-right">Sign in</button>
+            <button type="submit" class="btn btn-lg btn-primary pull-xs-right">Sign in</button>
           </form>
         </div>
       </div>

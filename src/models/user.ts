@@ -6,6 +6,13 @@ export interface UserData {
   token: string;
 }
 
+export interface UserSessionData {
+  username: string;
+  image: string;
+  isLoggedIn: boolean;
+  token: string;
+}
+
 export interface UpdateUser {
   username: string;
   email: string;
