@@ -25,22 +25,12 @@ export function getToken(cookies: AstroCookies) {
   return token;
 }
 
-export async function setSessionCookies({
-  username,
-  authToken,
-  image,
-  cookies,
-}: {
-  username: string;
-  authToken: string;
-  image: string;
-  cookies: AstroCookies;
-}) {
+export function setSessionCookies({ username, authToken, image, cookies }: { username: string; authToken: string; image: string; cookies: AstroCookies }) {
   const cookieOptions = { httpOnly: true, maxAge: 60 * 60 * 24, path: "/" };
   const userSession = JSON.stringify({ TOKEN_KEY: authToken, USERNAME_KEY: username, IMAGE_KEY: image });
   cookies.set(COOKIE_KEY, userSession, cookieOptions);
 }
 
-export async function logout(cookies: AstroCookies) {
+export function logout(cookies: AstroCookies) {
   cookies.delete(COOKIE_KEY);
 }

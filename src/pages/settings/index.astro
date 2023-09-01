@@ -1,0 +1,132 @@
+---
+import Layout from "../../Layout.astro";
+import { validateInput } from "../../common/helpers";
+import { getCurrentUser, updateUser } from "../../services/auth-service";
+import FormError from "../../components/errors/FormError.astro";
+import { getUserSessionData, logout, setSessionCookies } from "../../services/session-service";
+import type { UpdateUser } from "../../models/user";
+import LogoutButton from "../../components/buttons/LogoutButton.astro";
+const pageTitle = "Conduit - Settings";
+const userSession = getUserSessionData(Astro.cookies);
+// Load User-Data
+const currentUser = await getCurrentUser(userSession.token);
+console.log(currentUser?.bio);
+
+// Update User
+interface SettingsError {
+  errors: { [key: string]: string[] } | null;
+}
+
+const hasError: SettingsError = { errors: null };
+
+if (Astro.request.method === "POST") {
+  const formData = await Astro.request.formData();
+  const action = formData.get("action");
+  if (action == "logout") {
+    logout(Astro.cookies);
+    return Astro.redirect("/");
+  } else {
+    try {
+      const email = formData.get("email");
+      const password = formData.get("password");
+      const username = formData.get("username");
+      const image = formData.get("image");
+      const bio = formData.get("bio");
+
+      if (!validateInput(username)) {
+        hasError.errors = { "": ["username can't be blank"] };
+      }
+
+      if (!validateInput(email)) {
+        hasError.errors = { "": ["email can't be blank"] };
+      }
+
+      if (!validateInput(image)) {
+        hasError.errors = { "": ["image can't be blank"] };
+      }
+
+      const user: UpdateUser = {
+        username: username as string,
+        image: image as string,
+        email: email as string,
+      };
+
+      if (validateInput(bio)) user.bio = bio as string;
+      if (validateInput(password)) user.password = password as string;
+
+      const response = await updateUser(user, userSession.token);
+
+      if (!response.ok) {
+        hasError.errors = { [""]: ["Unknown error"] };
+      } else {
+        const data = await response.json();
+        setSessionCookies({
+          username: data.user.username,
+          authToken: data.user.token,
+          image: data.user.image,
+          cookies: Astro.cookies,
+        });
+        console.log("Update current user successful");
+        return Astro.redirect("/");
+      }
+    } catch (error) {
+      hasError.errors = { "": ["Unknown error"] };
+    }
+  }
+}
+---
+
+<Layout pageTitle={pageTitle}>
+  <div class="settings-page">
+    <div class="container page">
+      {
+        currentUser ? (
+          <div class="row">
+            <div class="col-md-6 offset-md-3 col-xs-12">
+              <h1 class="text-xs-center">Your Settings</h1>
+
+              {hasError.errors && <FormError errors={hasError.errors} />}
+
+              <form method="post">
+                <fieldset>
+                  <fieldset class="form-group">
+                    <input class="form-control" type="text" name="image" placeholder="URL of profile picture" value={currentUser.image} />
+                  </fieldset>
+                  <fieldset class="form-group">
+                    <input class="form-control form-control-lg" type="text" name="username" placeholder="Your Name" value={currentUser.username} />
+                  </fieldset>
+                  <fieldset class="form-group">
+                    {
+                      // prettier-ignore
+                      <textarea class="form-control form-control-lg" rows="8" name="bio" placeholder="Short bio about you" value={currentUser.bio}>{currentUser.bio}</textarea>
+                    }
+                  </fieldset>
+                  <fieldset class="form-group">
+                    <input class="form-control form-control-lg" type="text" name="email" placeholder="Email" value={currentUser.email} />
+                  </fieldset>
+                  <fieldset class="form-group">
+                    <input class="form-control form-control-lg" type="password" name="password" placeholder="New Password" />
+                  </fieldset>
+                  <button class="btn btn-lg btn-primary pull-xs-right" type="submit">
+                    Update Settings
+                  </button>
+                </fieldset>
+              </form>
+              <hr />
+              <form method="post">
+                <button class="btn btn-outline-danger" name="action" value="logout" type="submit">
+                  Or click here to logout.
+                </button>
+              </form>
+            </div>
+          </div>
+        ) : (
+          <>
+            <div>An Error occured</div>
+            <a href={"/settings"}>Please retry</a>
+          </>
+        )
+      }
+    </div>
+  </div>
+</Layout>

@@ -18,13 +18,16 @@ export async function register(credentials: RegisterCredentials) {
     body: JSON.stringify({ user: credentials }),
   });
 }
-export async function getCurrentUser(token: string | undefined): Promise<UserData> {
+export async function getCurrentUser(token?: string): Promise<UserData | null> {
   return fetch(`${BASE_URL}/user`, {
     method: "GET",
     headers: setHeaders(token),
   })
     .then((res) => res.json())
-    .then((res) => res.user);
+    .then((res) => res.user)
+    .catch(() => {
+      return null;
+    });
 }
 
 export async function updateUser(user: UpdateUser, token?: string) {
@@ -32,22 +35,5 @@ export async function updateUser(user: UpdateUser, token?: string) {
     method: "PUT",
     headers: setHeaders(token),
     body: JSON.stringify({ user }),
-  });
-}
-
-export async function setAuthCookies(user: UserData) {
-  await fetch("/middleware/auth", {
-    method: "POST",
-    headers: setHeaders(),
-    body: JSON.stringify({ token: user.token, username: user.username, image: user.image }),
-    credentials: "include",
-  });
-}
-
-export async function clearAuthToken() {
-  await fetch("/middleware/auth", {
-    method: "DELETE",
-    headers: setHeaders(),
-    credentials: "include",
   });
 }
