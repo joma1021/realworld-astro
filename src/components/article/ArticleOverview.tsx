@@ -1,8 +1,10 @@
+import { createContext } from "preact";
 import type { ArticlesDTO } from "../../models/article";
 import type { UserSessionData } from "../../models/user";
 import { getGlobalArticles, getYourArticles } from "../../services/article-service";
 import ArticlePreview from "./ArticlePreview";
 import { useEffect, useErrorBoundary, useState } from "preact/hooks";
+import { userSessionStore } from "../../common/store";
 
 interface ArticleOverviewState {
   articles: ArticlesDTO | null;
@@ -10,6 +12,7 @@ interface ArticleOverviewState {
 }
 
 export default function ArticleOverview({ filter, userSession }: { filter: string; userSession: UserSessionData }) {
+  userSessionStore.set(userSession);
   const feedFilter = filter ?? (userSession.isLoggedIn ? "your" : "global");
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);

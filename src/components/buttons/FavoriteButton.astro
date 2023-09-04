@@ -1,0 +1,11 @@
+---
+const { favorite, favoritesCount } = Astro.props;
+---
+
+<form style={{ display: "inline-block" }} method="post">
+  <button class={`btn btn-sm btn-${!favorite ? "outline-" : ""}primary `} type="submit" name="action" value={favorite ? "UNFAVORITE" : "FAVORITE"}>
+    <i class="ion-heart"></i>
+     &nbsp; {favorite ? "Unfavorite" : "Favorite"} Post
+    <span class="counter"> ({favoritesCount})</span>
+  </button>
+</form>

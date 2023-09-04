@@ -5,12 +5,10 @@ import { getCurrentUser, updateUser } from "../../services/auth-service";
 import FormError from "../../components/errors/FormError.astro";
 import { getUserSessionData, logout, setSessionCookies } from "../../services/session-service";
 import type { UpdateUser } from "../../models/user";
-import LogoutButton from "../../components/buttons/LogoutButton.astro";
 const pageTitle = "Conduit - Settings";
 const userSession = getUserSessionData(Astro.cookies);
 // Load User-Data
 const currentUser = await getCurrentUser(userSession.token);
-console.log(currentUser?.bio);
 
 // Update User
 interface SettingsError {

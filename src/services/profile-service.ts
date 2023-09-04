@@ -1,6 +1,6 @@
-import { BASE_URL } from "~/common/api";
-import { setHeaders } from "~/common/headers";
-import type { AuthorData } from "~/models/author";
+import { BASE_URL } from "../common/api";
+import { setHeaders } from "../common/headers";
+import type { AuthorData } from "../models/author";
 
 export async function getProfile(username: string, token?: string): Promise<AuthorData> {
   console.log("FETCH", `${BASE_URL}/${username}`);

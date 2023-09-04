@@ -1,4 +1,5 @@
 import type { ArticleData } from "../../models/article";
+import { FavoriteActionButton } from "../buttons/FovoriteActionButton";
 
 export default function ArticlePreview({ article }: { article: ArticleData }) {
   return (
@@ -13,11 +14,7 @@ export default function ArticlePreview({ article }: { article: ArticleData }) {
           </a>
           <span class="date">{article.createdAt}</span>
         </div>
-        {/* <FavoriteButtonSmall
-      favorite={article.favorited}
-      count={article.favoritesCount}
-      slug={article.slug}
-    />  */}
+        <FavoriteActionButton favorited={article.favorited} favoritesCount={article.favoritesCount} slug={article.slug} />
       </div>
       <a href={`/article/${article.slug}`} class="preview-link">
         <h1>{article.title}</h1>

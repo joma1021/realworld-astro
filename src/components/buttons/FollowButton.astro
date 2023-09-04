@@ -1,0 +1,11 @@
+---
+const { author } = Astro.props;
+---
+
+<form style={{ display: "inline-block" }} method="post">
+  <button class={`btn btn-sm btn-${author.following ? "outline-" : ""}secondary`} type="submit" name="action" value={author.following ? "UNFOLLOW" : "FOLLOW"}>
+    <i class="ion-plus-round"></i>
+     &nbsp; {author.following ? "Unfollow " : "Follow "}
+    {author.username}
+  </button>
+</form>
