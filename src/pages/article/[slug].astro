@@ -7,6 +7,7 @@ import DeleteButton from "../../components/buttons/DeleteButton.astro";
 import FollowButton from "../../components/buttons/FollowButton.astro";
 import FavoriteButton from "../../components/buttons/FavoriteButton.astro";
 import { followUser, unfollowUser } from "../../services/profile-service";
+import Comments from "../../components/comments/Comments.tsx";
 
 const pageTitle = "Conduit - Article";
 
@@ -130,7 +131,7 @@ if (Astro.request.method === "POST") {
           }
         </div>
       </div>
-      <!-- add Comments here -->
+      <Comments client:load slug={slug as string} userSession={userSession} />
     </div>
   </div>
 </Layout>
