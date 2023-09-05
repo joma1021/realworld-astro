@@ -2,7 +2,7 @@ import { useState } from "preact/hooks";
 import type { UserSessionData } from "../../models/user";
 import { followUser, unfollowUser } from "../../services/profile-service";
 
-export function FollowActionButton({ following, username, userSession }: { following: boolean; username: string; userSession: UserSessionData }) {
+export default function FollowActionButton({ following, username, userSession }: { following: boolean; username: string; userSession: UserSessionData }) {
   const [isFollowing, setIsFollowing] = useState(following);
 
   const handleOnClick = async () => {

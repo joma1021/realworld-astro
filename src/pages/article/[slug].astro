@@ -11,10 +11,10 @@ import Comments from "../../components/comments/Comments.tsx";
 
 const pageTitle = "Conduit - Article";
 
-const { slug } = Astro.params;
+const slug = Astro.params.slug as string;
 const userSession = getUserSessionData(Astro.cookies);
 
-const article = await getArticle(slug as string, userSession.token);
+const article = await getArticle(slug, userSession.token);
 
 if (Astro.request.method === "POST") {
   const formData = await Astro.request.formData();
@@ -26,7 +26,7 @@ if (Astro.request.method === "POST") {
       return Astro.redirect(`/editor/${slug}`);
     }
     case "DELETE": {
-      const response = await deleteArticle(slug as string, userSession.token);
+      const response = await deleteArticle(slug, userSession.token);
       if (response.ok) return Astro.redirect("/");
     }
     case "FOLLOW": {
@@ -131,7 +131,7 @@ if (Astro.request.method === "POST") {
           }
         </div>
       </div>
-      <Comments client:load slug={slug as string} userSession={userSession} />
+      <Comments client:load slug={slug} userSession={userSession} />
     </div>
   </div>
 </Layout>
