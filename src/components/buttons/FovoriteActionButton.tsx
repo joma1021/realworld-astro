@@ -14,12 +14,12 @@ export function FavoriteActionButton({ favorited, favoritesCount, slug }: { favo
 
   const handleOnClick = async () => {
     if (favoriteState.favorite) {
-      const response = await unfavoriteArticle(slug, $userSession?.token);
+      const response = await unfavoriteArticle(slug, $userSession.token);
       if (response.ok) {
         setFavoriteState({ favorite: false, count: favoriteState.count - 1 });
       }
     } else {
-      const response = await favoriteArticle(slug, $userSession?.token);
+      const response = await favoriteArticle(slug, $userSession.token);
       if (response.ok) {
         setFavoriteState({ favorite: true, count: favoriteState.count + 1 });
       }
@@ -29,7 +29,7 @@ export function FavoriteActionButton({ favorited, favoritesCount, slug }: { favo
   return (
     <button
       class={`btn btn-${!favoriteState.favorite ? "outline-" : ""}primary btn-sm pull-xs-right`}
-      onClick={$userSession?.isLoggedIn ? handleOnClick : () => (window.location.href = "/register")}
+      onClick={$userSession.isLoggedIn ? handleOnClick : () => (window.location.href = "/register")}
     >
       <i class="ion-heart"></i> {favoriteState.count}
     </button>

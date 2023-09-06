@@ -2,12 +2,9 @@
 import Layout from "../../Layout.astro";
 import { deleteArticle, favoriteArticle, getArticle, unfavoriteArticle } from "../../services/article-service";
 import { getUserSessionData } from "../../services/session-service";
-import EditButton from "../../components/buttons/EditButton.astro";
-import DeleteButton from "../../components/buttons/DeleteButton.astro";
-import FollowButton from "../../components/buttons/FollowButton.astro";
-import FavoriteButton from "../../components/buttons/FavoriteButton.astro";
+
 import { followUser, unfollowUser } from "../../services/profile-service";
-import Comments from "../../components/comments/Comments.tsx";
+import Article from "../../components/article/Article";
 
 const pageTitle = "Conduit - Article";
 
@@ -29,24 +26,6 @@ if (Astro.request.method === "POST") {
       const response = await deleteArticle(slug, userSession.token);
       if (response.ok) return Astro.redirect("/");
     }
-    case "FOLLOW": {
-      const username = article.author.username;
-      if (username) await followUser(username, userSession.token);
-      return Astro.redirect(url);
-    }
-    case "UNFOLLOW": {
-      const username = article.author.username;
-      if (username) await unfollowUser(username, userSession.token);
-      return Astro.redirect(url);
-    }
-    case "FAVORITE": {
-      await favoriteArticle(article.slug, userSession.token);
-      return Astro.redirect(url);
-    }
-    case "UNFAVORITE": {
-      await unfavoriteArticle(article.slug, userSession.token);
-      return Astro.redirect(url);
-    }
     default: {
       return null;
     }
@@ -55,83 +34,5 @@ if (Astro.request.method === "POST") {
 ---
 
 <Layout pageTitle={pageTitle}>
-  <div class="article-page">
-    <div class="banner">
-      <div class="container">
-        <h1>{article.title}</h1>
-
-        <div class="article-meta">
-          <a href={`/profile/${article.author.username}/articles`}>
-            <img src={article.author.image} />
-          </a>
-
-          <div class="info">
-            <a href={`/profile/${article.author.username}/articles`} class="author">
-              {article.author.username}
-            </a>
-            <span class="date">{article.createdAt}</span>
-          </div>
-
-          {
-            article.author.username == userSession.username ? (
-              <>
-                <EditButton />
-                &nbsp;&nbsp;
-                <DeleteButton />
-              </>
-            ) : (
-              <>
-                <FollowButton author={article.author} />
-                &nbsp;&nbsp;
-                <FavoriteButton favorite={article.favorited} favoritesCount={article.favoritesCount} />
-              </>
-            )
-          }
-        </div>
-      </div>
-    </div>
-
-    <div class="container page">
-      <div class="row article-content">
-        <div class="col-md-12">
-          <ul class="tag-list">
-            <p>{article.body}</p>
-            {article.tagList.map((tag) => <li class="tag-default tag-pill tag-outline">{tag}</li>)}
-          </ul>
-        </div>
-      </div>
-
-      <hr />
-
-      <div class="article-actions">
-        <div class="article-meta">
-          <a href={`/profile/${article.author.username}/articles`}>
-            <img src={article.author.image} />
-          </a>
-          <div class="info">
-            <a href={`/profile/${article.author.username}/articles`} class="author">
-              {article.author.username}
-            </a>
-            <span class="date">{article.createdAt}</span>
-          </div>
-          {
-            article.author.username == userSession.username ? (
-              <>
-                <EditButton />
-                &nbsp;&nbsp;
-                <DeleteButton />
-              </>
-            ) : (
-              <>
-                <FollowButton author={article.author} />
-                &nbsp;&nbsp;
-                <FavoriteButton favorite={article.favorited} favoritesCount={article.favoritesCount} />
-              </>
-            )
-          }
-        </div>
-      </div>
-      <Comments client:load slug={slug} userSession={userSession} />
-    </div>
-  </div>
+  <Article client:load slug={slug} userSession={userSession} />
 </Layout>
