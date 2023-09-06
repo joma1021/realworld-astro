@@ -3,6 +3,7 @@ import { getUserSessionData } from "../../services/session-service";
 import { getProfile } from "../../services/profile-service";
 import FollowActionButton from "../../components/buttons/FollowActionButton";
 import Layout from "../../Layout.astro";
+import ProfileArticleOverview from "../../components/article/ProfileArticleOverview";
 const pageTitle = "Conduit - Profile";
 const username = Astro.params.username as string;
 const userSession = getUserSessionData(Astro.cookies);
@@ -35,6 +36,6 @@ const profile = await getProfile(username, userSession.token);
       </div>
     </div>
 
-    <!-- <ArticleList /> -->
+    <ProfileArticleOverview client:load username={username} userSession={userSession} />
   </div>
 </Layout>

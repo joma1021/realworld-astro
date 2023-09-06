@@ -1,4 +1,3 @@
-import { createContext } from "preact";
 import type { ArticlesDTO } from "../../models/article";
 import type { UserSessionData } from "../../models/user";
 import { getGlobalArticles, getYourArticles } from "../../services/article-service";
@@ -97,16 +96,6 @@ export default function ArticleOverview({ filter, userSession }: { filter: strin
             ))}
         </ul>
       )}
-    </div>
-  );
-}
-
-export function ErrorBoundary() {
-  const [error, resetError] = useErrorBoundary();
-  return (
-    <div>
-      <p>{error.message}</p>
-      <button onClick={resetError}>Try again</button>
     </div>
   );
 }

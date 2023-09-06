@@ -30,7 +30,6 @@ export default function Comments({ slug }: { slug: string }) {
     setIsLoading(true);
     fetchComments()
       .catch(() => {
-        console.log("comment error");
         return setCommentState({ comments: [], hasError: true });
       })
       .then(() => setIsLoading(false));
