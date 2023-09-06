@@ -5,6 +5,7 @@ import { getCurrentUser, updateUser } from "../../services/auth-service";
 import FormError from "../../components/errors/FormError.astro";
 import { getUserSessionData, logout, setSessionCookies } from "../../services/session-service";
 import type { UpdateUser } from "../../models/user";
+import DefaultError from "../../components/errors/DefaultError.astro";
 const pageTitle = "Conduit - Settings";
 const userSession = getUserSessionData(Astro.cookies);
 // Load User-Data
@@ -119,10 +120,7 @@ if (Astro.request.method === "POST") {
             </div>
           </div>
         ) : (
-          <>
-            <div>An Error occured</div>
-            <a href={"/settings"}>Please retry</a>
-          </>
+          <DefaultError />
         )
       }
     </div>

@@ -1,5 +1,6 @@
 ---
 import { getTags } from "../../services/article-service";
+import DefaultError from "../errors/DefaultError.astro";
 
 const tags = await getTags();
 ---
@@ -9,17 +10,14 @@ const tags = await getTags();
     <p>Popular Tags</p>
     <div class="tag-list">
       {
-        tags ? (
+        tags.length > 0 ? (
           tags.map((tag: string) => (
             <a class="tag-pill tag-default" style={{ cursor: "pointer" }} href={`/?filter=${tag}`}>
               {tag}
             </a>
           ))
         ) : (
-          <>
-            <div>An Error occured</div>
-            <a href={"/"}>Please retry</a>
-          </>
+          <DefaultError />
         )
       }
     </div>

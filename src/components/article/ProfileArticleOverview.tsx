@@ -35,7 +35,6 @@ export default function ProfileArticleOverview({ userSession, username }: { user
       .then(() => setIsLoading(false));
   }, [pageState]);
 
-  console.log("render");
   return (
     <div class="container">
       <div class="row">

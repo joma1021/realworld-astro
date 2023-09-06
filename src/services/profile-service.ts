@@ -2,8 +2,8 @@ import { BASE_URL } from "../common/api";
 import { setHeaders } from "../common/headers";
 import type { AuthorData } from "../models/author";
 
-export async function getProfile(username: string, token?: string): Promise<AuthorData> {
-  console.log("FETCH", `${BASE_URL}/${username}`);
+export async function getProfile(username: string, token?: string): Promise<AuthorData | null> {
+  console.log("FETCH", `${BASE_URL}/profiles/${username}`);
   try {
     const response = await fetch(`${BASE_URL}/profiles/${username}`, {
       method: "GET",
@@ -11,7 +11,7 @@ export async function getProfile(username: string, token?: string): Promise<Auth
       headers: setHeaders(token),
     });
     if (!response.ok) {
-      return Promise.reject(response.statusText);
+      return null;
     }
     console.log("FETCH profile resolved");
 

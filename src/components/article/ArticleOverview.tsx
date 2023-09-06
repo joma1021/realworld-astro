@@ -2,7 +2,7 @@ import type { ArticlesDTO } from "../../models/article";
 import type { UserSessionData } from "../../models/user";
 import { getGlobalArticles, getYourArticles } from "../../services/article-service";
 import ArticlePreview from "./ArticlePreview";
-import { useEffect, useErrorBoundary, useState } from "preact/hooks";
+import { useEffect, useState } from "preact/hooks";
 import { userSessionStore } from "../../common/store";
 
 interface ArticleOverviewState {

@@ -2,15 +2,16 @@ import { BASE_URL } from "../common/api";
 import { setHeaders } from "../common/headers";
 import type { ArticleData, ArticlesDTO, EditArticleData } from "../models/article";
 
-export async function getTags(): Promise<string[] | null> {
+export async function getTags(): Promise<string[]> {
   const response = await fetch(`${BASE_URL}/tags`, { method: "GET" });
   if (!response.ok) {
-    return null;
+    return [];
   }
   console.log("FETCH tags resolved");
   const data = await response.json();
   return data.tags;
 }
+
 export async function getGlobalArticles(token?: string, page?: number, tag?: string): Promise<ArticlesDTO> {
   const offset = page ? (page - 1) * 10 : 0;
   const searchParams = tag
@@ -84,7 +85,7 @@ export async function getProfileArticles(username: string, tab: string, token?: 
   return await response.json();
 }
 
-export async function getArticle(slug: string, token?: string): Promise<ArticleData> {
+export async function getArticle(slug: string, token?: string): Promise<ArticleData | null> {
   console.log("FETCH", `${BASE_URL}/articles/${slug}`);
 
   const response = await fetch(`${BASE_URL}/articles/${slug}`, {
@@ -92,7 +93,7 @@ export async function getArticle(slug: string, token?: string): Promise<ArticleD
     headers: setHeaders(token),
   });
   if (!response.ok) {
-    throw Error(response.statusText);
+    return null;
   }
   console.log("FETCH article resolved");
   const data = await response.json();

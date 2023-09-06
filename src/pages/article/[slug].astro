@@ -1,11 +1,9 @@
 ---
 import Layout from "../../Layout.astro";
-import { deleteArticle, favoriteArticle, getArticle, unfavoriteArticle } from "../../services/article-service";
+import { deleteArticle, getArticle } from "../../services/article-service";
 import { getUserSessionData } from "../../services/session-service";
-
-import { followUser, unfollowUser } from "../../services/profile-service";
 import Article from "../../components/article/Article";
-
+import DefaultError from "../../components/errors/DefaultError.astro";
 const pageTitle = "Conduit - Article";
 
 const slug = Astro.params.slug as string;
@@ -16,7 +14,6 @@ const article = await getArticle(slug, userSession.token);
 if (Astro.request.method === "POST") {
   const formData = await Astro.request.formData();
   const action = formData.get("action");
-  const url = await Astro.url;
 
   switch (action) {
     case "EDIT": {
@@ -34,5 +31,5 @@ if (Astro.request.method === "POST") {
 ---
 
 <Layout pageTitle={pageTitle}>
-  <Article client:load slug={slug} userSession={userSession} />
+  {article ? <Article client:load article={article} userSession={userSession} /> : <DefaultError />}
 </Layout>

@@ -4,6 +4,7 @@ import { getProfile } from "../../services/profile-service";
 import FollowActionButton from "../../components/buttons/FollowActionButton";
 import Layout from "../../Layout.astro";
 import ProfileArticleOverview from "../../components/article/ProfileArticleOverview";
+import DefaultError from "../../components/errors/DefaultError.astro";
 const pageTitle = "Conduit - Profile";
 const username = Astro.params.username as string;
 const userSession = getUserSessionData(Astro.cookies);
@@ -12,30 +13,34 @@ const profile = await getProfile(username, userSession.token);
 ---
 
 <Layout pageTitle={pageTitle}>
-  <div class="profile-page">
-    <div class="user-info">
-      <div class="container">
-        <div class="row">
-          <div class="col-xs-12 col-md-10 offset-md-1">
-            <img src={profile.image} class="user-img" />
-            <h4>{profile.username}</h4>
-            <p>{profile.bio}</p>
+  {
+    profile ? (
+      <div class="profile-page">
+        <div class="user-info">
+          <div class="container">
+            <div class="row">
+              <div class="col-xs-12 col-md-10 offset-md-1">
+                <img src={profile.image} class="user-img" />
+                <h4>{profile.username}</h4>
+                <p>{profile.bio}</p>
 
-            {
-              profile.username == userSession.username ? (
-                <a class="btn btn-sm btn-outline-secondary action-btn" href={"/settings"}>
-                  <i class="ion-gear-a" />
-                  &nbsp; Edit Profile Settings
-                </a>
-              ) : (
-                <FollowActionButton client:load following={profile.following} username={profile.username} userSession={userSession} />
-              )
-            }
+                {profile.username == userSession.username ? (
+                  <a class="btn btn-sm btn-outline-secondary action-btn" href={"/settings"}>
+                    <i class="ion-gear-a" />
+                    &nbsp; Edit Profile Settings
+                  </a>
+                ) : (
+                  <FollowActionButton client:load following={profile.following} username={profile.username} userSession={userSession} />
+                )}
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <ProfileArticleOverview client:load username={username} userSession={userSession} />
-  </div>
+        <ProfileArticleOverview client:load username={username} userSession={userSession} />
+      </div>
+    ) : (
+      <DefaultError />
+    )
+  }
 </Layout>

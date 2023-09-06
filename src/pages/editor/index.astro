@@ -1,0 +1,74 @@
+---
+import Layout from "../../Layout.astro";
+import { validateInput } from "../../common/helpers";
+import EditorForm from "../../components/editor/EditorForm";
+import FormError from "../../components/errors/FormError.astro";
+import type { EditArticleData } from "../../models/article";
+import { createArticle } from "../../services/article-service";
+import { getUserSessionData } from "../../services/session-service";
+
+const pageTitle = "Conduit - Editor";
+interface EditorError {
+  errors: { [key: string]: string[] } | null;
+}
+const hasError: EditorError = { errors: null };
+
+if (Astro.request.method === "POST") {
+  try {
+    const formData = await Astro.request.formData();
+    const title = formData.get("title");
+    const description = formData.get("description");
+    const body = formData.get("body");
+    const tags = formData.get("tags") as string;
+    const tagList = tags.split(",");
+
+    if (!validateInput(title)) {
+      hasError.errors = { "": ["title can't be blank"] };
+    }
+
+    if (!validateInput(description)) {
+      hasError.errors = { "": ["description can't be blank"] };
+    }
+
+    if (!validateInput(body)) {
+      hasError.errors = { "": ["body can't be blank"] };
+    }
+    const editArticle: EditArticleData = {
+      title: title as string,
+      description: description as string,
+      body: body as string,
+      tagList: tagList,
+    };
+    const userSession = getUserSessionData(Astro.cookies);
+
+    const response = await createArticle(editArticle, userSession.token);
+
+    if (!response.ok) {
+      if (response.status == 422) {
+        const data = await response.json();
+        data.status == "error" ? (hasError.errors = { ["Error: "]: [data.message] }) : (hasError.errors = data.errors);
+      } else {
+        hasError.errors = { [""]: ["Unknown error"] };
+      }
+    } else {
+      const data = await response.json();
+      return Astro.redirect(`/article/${data.article.slug}`);
+    }
+  } catch (error) {
+    hasError.errors = { "": ["Unknown error"] };
+  }
+}
+---
+
+<Layout pageTitle={pageTitle}>
+  <div class="editor-page">
+    <div class="container page">
+      <div class="row">
+        <div class="col-md-10 offset-md-1 col-xs-12">
+          {hasError.errors && <FormError errors={hasError.errors} />}
+          <EditorForm client:load />
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
