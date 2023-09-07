@@ -3,6 +3,9 @@ import type { EditArticleData } from "../../models/article";
 
 export default function EditorForm({ article }: { article?: EditArticleData }) {
   const [tagListState, setTagListState] = useState<string[]>(article?.tagList ?? []);
+  const [titleState, setTitleState] = useState<string>(article?.title ?? "");
+  const [bodyState, setBodyState] = useState<string>(article?.body ?? "");
+  const [descriptionState, setDescriptionState] = useState<string>(article?.description ?? "");
 
   function removeTag(tag: string): void {
     const newTagList = tagListState.filter((t) => t != tag);
@@ -13,18 +16,39 @@ export default function EditorForm({ article }: { article?: EditArticleData }) {
     const tags = event.target.value;
     setTagListState(tags.split(","));
   }
+
   return (
     <form method="post">
       <fieldset>
         <fieldset class="form-group">
-          <input type="text" class="form-control form-control-lg" name="title" placeholder="Article Title" value={article?.title} />
+          <input
+            type="text"
+            class="form-control form-control-lg"
+            name="title"
+            placeholder="Article Title"
+            value={titleState}
+            onInput={(event: any) => setTitleState(event.target.value)}
+          />
         </fieldset>
         <fieldset class="form-group">
-          <input type="text" class="form-control" name="description" placeholder="What's this article about?" value={article?.description} />
+          <input
+            type="text"
+            class="form-control"
+            name="description"
+            placeholder="What's this article about?"
+            value={descriptionState}
+            onInput={(event: any) => setDescriptionState(event.target.value)}
+          />
         </fieldset>
         <fieldset class="form-group">
-          <textarea class="form-control" rows={8} name="body" placeholder="Write your article (in markdown)">
-            {article?.body}
+          <textarea
+            class="form-control"
+            rows={8}
+            name="body"
+            placeholder="Write your article (in markdown)"
+            onInput={(event: any) => setBodyState(event.target.value)}
+          >
+            {bodyState}
           </textarea>
         </fieldset>
         <fieldset class="form-group">

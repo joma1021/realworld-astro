@@ -2,7 +2,6 @@ import { validateInput } from "../../common/helpers";
 import { createComment, deleteComment, getComments } from "../../services/comment-service";
 import { useEffect, useState } from "preact/hooks";
 import type { CommentData } from "../../models/comment";
-import type { UserSessionData } from "../../models/user";
 import { useStore } from "@nanostores/preact";
 import { userSessionStore } from "../../common/store";
 
