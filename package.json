@@ -12,6 +12,7 @@
   "dependencies": {
     "@astrojs/node": "^6.0.0",
     "@astrojs/preact": "^3.0.0",
+    "@astrojs/vercel": "^4.0.4",
     "@nanostores/preact": "^0.5.0",
     "astro": "^3.0.3",
     "nanostores": "^0.9.3",

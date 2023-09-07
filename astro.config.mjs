@@ -6,7 +6,5 @@ import node from "@astrojs/node";
 export default defineConfig({
   integrations: [preact({ compat: true })],
   output: "server",
-  adapter: node({
-    mode: "standalone",
-  }),
+  adapter: vercel(),
 });
