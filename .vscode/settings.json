@@ -1,1 +1,42 @@
-{}
+{
+  "todo-tree.highlights.defaultHighlight": {
+    "icon": "alert",
+    "type": "text-and-comment",
+    "foreground": "black",
+    "background": "white",
+    "opacity": 50,
+    "iconColour": "blue",
+    "gutterIcon": true
+  },
+  "todo-tree.highlights.customHighlight": {
+    "TODO": {
+      "icon": "check",
+      "foreground": "black",
+      "background": "white",
+      "iconColour": "white"
+    },
+    "NOTE": {
+      "icon": "note",
+      "foreground": "white",
+      "background": "gray",
+      "iconColour": "gray"
+    },
+    "COMMENT": {
+      "icon": "note",
+      "foreground": "white",
+      "background": "gray",
+      "iconColour": "gray"
+    },
+    "FIXME": {
+      "foreground": "black",
+      "background": "yellow",
+      "iconColour": "yellow"
+    },
+    "BUG": {
+      "foreground": "black",
+      "background": "red",
+      "iconColour": "red"
+    }
+  },
+  "todo-tree.general.tags": ["BUG", "HACK", "FIXME", "TODO", "NOTE", "COMMENT"]
+}

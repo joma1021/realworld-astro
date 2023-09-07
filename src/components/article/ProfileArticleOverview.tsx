@@ -15,8 +15,7 @@ export default function ProfileArticleOverview({ userSession, username }: { user
   const [articlesState, setState] = useState<ArticleOverviewState>({ articles: null, hasError: false });
 
   const fetchArticles = async () => {
-    // TODO: Keep in mind
-    // Keeping token in JS is not secure. A better solution is setting up a proxy server
+    // NOTE: Keeping token in JS is not secure. A better solution is setting up a proxy server.
     const token = userSession.token;
 
     if (pageState.filter === "my") {

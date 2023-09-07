@@ -17,8 +17,7 @@ export default function Comments({ slug }: { slug: string }) {
   const $userSession = useStore(userSessionStore);
 
   const fetchComments = async () => {
-    // TODO: Keep in mind
-    // Keeping token in JS is not secure. A better solution is setting up a proxy server
+    // NOTE: Keeping token in JS is not secure. A better solution is setting up a proxy server.
     const token = $userSession.token;
 
     const comments = await getComments(slug, token);

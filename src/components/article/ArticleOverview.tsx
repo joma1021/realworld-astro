@@ -18,8 +18,7 @@ export default function ArticleOverview({ filter, userSession }: { filter: strin
   const [articlesState, setState] = useState<ArticleOverviewState>({ articles: null, hasError: false });
 
   const fetchArticles = async () => {
-    // TODO: Keep in mind
-    // Keeping token in JS is not secure. A better solution is setting up a proxy server
+    // NOTE: Keeping token in JS is not secure. A better solution is setting up a proxy server.
     const token = userSession.token;
 
     if (feedFilter === "global") {
