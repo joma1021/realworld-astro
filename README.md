@@ -4,7 +4,7 @@
 
 ### [Demo](https://realworld-astro.vercel.app/)&nbsp;&nbsp;&nbsp;&nbsp;[RealWorld](https://github.com/gothinkster/realworld)
 
-This codebase was created to demonstrate a frontend application application built with [Astro](https://astro.build/) and [Preact](https://preactjs.com/) including CRUD operations, authentication, routing, pagination, and more.
+This codebase was created to demonstrate a frontend application built with [Astro](https://astro.build/) and [Preact](https://preactjs.com/) including CRUD operations, authentication, routing, pagination, and more.
 
 We've gone to great lengths to adhere to the [Astro](https://docs.astro.build/de/getting-started/) community styleguides & best practices.
 
