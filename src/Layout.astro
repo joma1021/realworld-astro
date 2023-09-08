@@ -1,6 +1,7 @@
 ---
 import Footer from "./components/layout/Footer.astro";
 import Header from "./components/layout/Header.astro";
+import "./styles/global.css";
 const { pageTitle } = Astro.props;
 ---
 
@@ -17,7 +18,6 @@ const { pageTitle } = Astro.props;
       rel="stylesheet"
       type="text/css"
     />
-    <link rel="stylesheet" href="//demo.productionready.io/main.css" />
   </head>
   <body>
     <Header />
