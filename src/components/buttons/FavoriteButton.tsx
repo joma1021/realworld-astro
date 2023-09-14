@@ -1,6 +1,6 @@
 import { favoriteArticle, unfavoriteArticle } from "../../services/article-service";
 import { useStore } from "@nanostores/preact";
-import { favoriteStore, userSessionStore } from "../../common/store";
+import { favoriteStore } from "../../common/store";
 import { useEffect } from "preact/hooks";
 import type { UserSessionData } from "../../models/user";
 
