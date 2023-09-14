@@ -2,8 +2,12 @@
 import Layout from "../../Layout.astro";
 import { deleteArticle, getArticle } from "../../services/article-service";
 import { getUserSessionData } from "../../services/session-service";
-import Article from "../../components/article/Article";
 import DefaultError from "../../components/errors/DefaultError.astro";
+import EditButton from "../../components/buttons/EditButton.astro";
+import DeleteButton from "../../components/buttons/DeleteButton.astro";
+import FollowButton from "../../components/buttons/FollowButton";
+import FavoriteButton from "../../components/buttons/FavoriteButton";
+import Comments from "../../components/comments/Comments";
 const pageTitle = "Conduit - Article";
 
 const slug = Astro.params.slug as string;
@@ -31,5 +35,99 @@ if (Astro.request.method === "POST") {
 ---
 
 <Layout pageTitle={pageTitle}>
-  {article ? <Article client:load article={article} userSession={userSession} /> : <DefaultError />}
+  {
+    article ? (
+      <div class="article-page">
+        <div class="banner">
+          <div class="container">
+            <h1>{article.title}</h1>
+
+            <div class="article-meta">
+              <a href={`/profile/${article.author.username}/articles`}>
+                <img src={article.author.image} />
+              </a>
+
+              <div class="info">
+                <a href={`/profile/${article.author.username}/articles`} class="author">
+                  {article.author.username}
+                </a>
+                <span class="date">{article.createdAt}</span>
+              </div>
+
+              {article.author.username == userSession.username ? (
+                <>
+                  <EditButton />
+                  &nbsp;&nbsp;
+                  <DeleteButton />
+                </>
+              ) : (
+                <>
+                  <FollowButton client:load username={article.author.username} isFollowing={article.author.following} userSession={userSession} />
+                  &nbsp;&nbsp;
+                  <FavoriteButton
+                    client:load
+                    slug={article.slug}
+                    favorited={article.favorited}
+                    favoritesCount={article.favoritesCount}
+                    userSession={userSession}
+                  />
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div class="container page">
+          <div class="row article-content">
+            <div class="col-md-12">
+              <ul class="tag-list">
+                <p>{article.body}</p>
+                {article.tagList.map((tag) => (
+                  <li class="tag-default tag-pill tag-outline">{tag}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          <hr />
+
+          <div class="article-actions">
+            <div class="article-meta">
+              <a href={`/profile/${article.author.username}/articles`}>
+                <img src={article.author.image} />
+              </a>
+              <div class="info">
+                <a href={`/profile/${article.author.username}/articles`} class="author">
+                  {article.author.username}
+                </a>
+                <span class="date">{article.createdAt}</span>
+              </div>
+              {article.author.username == userSession.username ? (
+                <>
+                  <EditButton />
+                  &nbsp;&nbsp;
+                  <DeleteButton />
+                </>
+              ) : (
+                <>
+                  <FollowButton client:load username={article.author.username} isFollowing={article.author.following} userSession={userSession} />
+                  &nbsp;&nbsp;
+                  <FavoriteButton
+                    client:load
+                    slug={article.slug}
+                    favorited={article.favorited}
+                    favoritesCount={article.favoritesCount}
+                    userSession={userSession}
+                  />
+                </>
+              )}
+            </div>
+          </div>
+          <Comments client:load slug={article.slug} userSession={userSession} />
+        </div>
+      </div>
+    ) : (
+      <DefaultError />
+    )
+  }
 </Layout>
