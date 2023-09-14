@@ -1,0 +1,29 @@
+---
+import { getUserSessionData } from "../../services/session-service";
+import { FavoriteActionButton } from "../buttons/FovoriteActionButton";
+const article = Astro.props.article;
+const userSession = getUserSessionData(Astro.cookies);
+---
+
+<div class="article-preview">
+  <div class="article-meta">
+    <a href={`/profile/${article.author.username}`}>
+      <img src={`${article.author.image}`} />
+    </a>
+    <div class="info">
+      <a href={`/profile/${article.author.username}`} class="author">
+        {article.author.username}
+      </a>
+      <span class="date">{article.createdAt}</span>
+    </div>
+    <FavoriteActionButton client:load favorited={article.favorited} favoritesCount={article.favoritesCount} slug={article.slug} userSession={userSession} />
+  </div>
+  <a href={`/article/${article.slug}`} class="preview-link">
+    <h1>{article.title}</h1>
+    <p>{article.description}</p>
+    <span>Read more...</span>
+    <ul class="tag-list">
+      {article.tagList.map((tag: string) => <li class="tag-default tag-pill tag-outline">{tag}</li>)}
+    </ul>
+  </a>
+</div>
