@@ -12,7 +12,7 @@ const page = Number(Astro.url.searchParams.get("page") ?? 1);
 const userSession = getUserSessionData(Astro.cookies);
 const feedFilter = filter ?? (userSession.isLoggedIn ? "your" : "global");
 
-let articles: ArticlesDTO;
+let articles: ArticlesDTO | null;
 
 if (feedFilter === "global") {
   articles = await getGlobalArticles(userSession.token, page);
@@ -80,15 +80,16 @@ if (feedFilter === "global") {
           }
           <ul class="pagination">
             {
-              Array(Math.ceil((articles.articlesCount ?? 0) / 10))
-                .fill(null)
-                .map((_, i) => (
-                  <li class={`page-item  ${i == page - 1 ? "active" : ""}`}>
-                    <a class="page-link" style="cursor: pointer;" href={`/?filter=${feedFilter}&page=${i + 1}`}>
-                      {i + 1}
-                    </a>
-                  </li>
-                ))
+              articles &&
+                Array(Math.ceil((articles.articlesCount ?? 0) / 10))
+                  .fill(null)
+                  .map((_, i) => (
+                    <li class={`page-item  ${i == page - 1 ? "active" : ""}`}>
+                      <a class="page-link" style="cursor: pointer;" href={`/?filter=${feedFilter}&page=${i + 1}`}>
+                        {i + 1}
+                      </a>
+                    </li>
+                  ))
             }
           </ul>
         </div>
