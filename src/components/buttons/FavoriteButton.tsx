@@ -1,32 +1,47 @@
 import { favoriteArticle, unfavoriteArticle } from "../../services/article-service";
 import { useStore } from "@nanostores/preact";
-import { favoriteStore, userSessionStore } from "../../common/store";
+import { favoriteStore } from "../../common/store";
+import { useEffect } from "preact/hooks";
+import type { UserSessionData } from "../../models/user";
 
-export default function FavoriteButton({ slug }: { slug: string }) {
-  const $isFollowing = useStore(favoriteStore);
-  const $userSession = useStore(userSessionStore);
+export default function FavoriteButton({
+  slug,
+  favorited,
+  favoritesCount,
+  userSession,
+}: {
+  slug: string;
+  favorited: boolean;
+  favoritesCount: number;
+  userSession: UserSessionData;
+}) {
+  const $favorite = useStore(favoriteStore);
+
+  useEffect(() => {
+    favoriteStore.set({ favorite: favorited, favoritesCount: favoritesCount });
+  }, []);
 
   const handleOnClick = async () => {
-    if ($isFollowing.favorite) {
-      const response = await unfavoriteArticle(slug, $userSession.token);
+    if ($favorite.favorite) {
+      const response = await unfavoriteArticle(slug, userSession.token);
       if (response.ok) {
-        favoriteStore.set({ favorite: false, favoritesCount: $isFollowing.favoritesCount - 1 });
+        favoriteStore.set({ favorite: false, favoritesCount: $favorite.favoritesCount - 1 });
       }
     } else {
-      const response = await favoriteArticle(slug, $userSession.token);
+      const response = await favoriteArticle(slug, userSession.token);
       if (response.ok) {
-        favoriteStore.set({ favorite: true, favoritesCount: $isFollowing.favoritesCount + 1 });
+        favoriteStore.set({ favorite: true, favoritesCount: $favorite.favoritesCount + 1 });
       }
     }
   };
 
   return (
     <button
-      class={`btn btn-sm btn-${!$isFollowing.favorite ? "outline-" : ""}primary`}
-      onClick={$userSession.isLoggedIn ? handleOnClick : () => (window.location.href = "/register")}
+      class={`btn btn-sm btn-${$favorite.favorite ? "" : "outline-"}primary`}
+      onClick={userSession.isLoggedIn ? handleOnClick : () => (window.location.href = "/register")}
     >
       <i class="ion-heart"></i>
-      &nbsp; {$isFollowing.favorite ? "Unfavorite" : "Favorite"} Article <span class="counter">({$isFollowing.favoritesCount})</span>
+      &nbsp; {$favorite.favorite ? "Unfavorite" : "Favorite"} Article <span class="counter">({$favorite.favoritesCount})</span>
     </button>
   );
 }

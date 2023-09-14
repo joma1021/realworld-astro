@@ -1,12 +1,26 @@
 ---
 import Layout from "../Layout.astro";
-import ArticleOverview from "../components/article/ArticleOverview";
+import ArticlePreview from "../components/article/ArticlePreview.astro";
 import TagSidebar from "../components/tags/TagSidebar.astro";
+import type { ArticlesDTO } from "../models/article";
+import { getGlobalArticles, getYourArticles } from "../services/article-service";
 import { getUserSessionData } from "../services/session-service";
 
 const pageTitle = "Conduit - Home";
 const filter = Astro.url.searchParams.get("filter") as string;
+const page = Number(Astro.url.searchParams.get("page") ?? 1);
 const userSession = getUserSessionData(Astro.cookies);
+const feedFilter = filter ?? (userSession.isLoggedIn ? "your" : "global");
+
+let articles: ArticlesDTO;
+
+if (feedFilter === "global") {
+  articles = await getGlobalArticles(userSession.token, page);
+} else if (feedFilter === "your") {
+  articles = await getYourArticles(userSession.token, page);
+} else {
+  articles = await getGlobalArticles(userSession.token, page, feedFilter);
+}
 ---
 
 <Layout pageTitle={pageTitle}>
@@ -23,7 +37,61 @@ const userSession = getUserSessionData(Astro.cookies);
     }
     <div class="container page">
       <div class="row">
-        <ArticleOverview client:load filter={filter} userSession={userSession} />
+        <div class="col-md-9">
+          <div class="feed-toggle">
+            <ul class="nav nav-pills outline-active">
+              {
+                userSession.isLoggedIn && (
+                  <li class="nav-item">
+                    <a class={`nav-link ${feedFilter === "your" ? "active" : ""}`} href="/?filter=your">
+                      Your Feed
+                    </a>
+                  </li>
+                )
+              }
+              <li class="nav-item">
+                <a class={`nav-link ${feedFilter === "global" ? "active" : ""}`} href="/?filter=global"> Global Feed</a>
+              </li>
+              {
+                feedFilter != "global" && feedFilter != "your" && (
+                  <li class="nav-item">
+                    <a class="nav-link active">#{feedFilter}</a>{" "}
+                  </li>
+                )
+              }
+            </ul>
+          </div>
+          {
+            articles ? (
+              <div>
+                {articles.articlesCount == 0 ? (
+                  <div>No articles are here... yet.</div>
+                ) : (
+                  <ul>
+                    {articles.articles.map((article) => (
+                      <ArticlePreview article={article} />
+                    ))}
+                  </ul>
+                )}
+              </div>
+            ) : (
+              <div>Error: An error occurred while fetching data</div>
+            )
+          }
+          <ul class="pagination">
+            {
+              Array(Math.ceil((articles.articlesCount ?? 0) / 10))
+                .fill(null)
+                .map((_, i) => (
+                  <li class={`page-item  ${i == page - 1 ? "active" : ""}`}>
+                    <a class="page-link" style="cursor: pointer;" href={`/?filter=${feedFilter}&page=${i + 1}`}>
+                      {i + 1}
+                    </a>
+                  </li>
+                ))
+            }
+          </ul>
+        </div>
         <TagSidebar />
       </div>
     </div>

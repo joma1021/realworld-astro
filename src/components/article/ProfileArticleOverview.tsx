@@ -1,7 +1,7 @@
 import type { ArticlesDTO } from "../../models/article";
 import type { UserSessionData } from "../../models/user";
 import { getProfileArticles } from "../../services/article-service";
-import ArticlePreview from "./ArticlePreview";
+import ProfileArticlePreview from "./ProfileArticlePreview.tsx";
 import { useEffect, useState } from "preact/hooks";
 
 interface ArticleOverviewState {
@@ -16,7 +16,6 @@ export default function ProfileArticleOverview({ userSession, username }: { user
 
   const fetchArticles = async () => {
     // NOTE: Keeping token in JS is not secure. A better solution is setting up a proxy server.
-    const token = userSession.token;
 
     if (pageState.filter === "my") {
       const articles = await getProfileArticles(username, pageState.filter, userSession.token, pageState.page);
@@ -70,7 +69,7 @@ export default function ProfileArticleOverview({ userSession, username }: { user
               {articlesState.articles?.articlesCount == 0 ? (
                 <div>No articles are here... yet.</div>
               ) : (
-                <ul>{articlesState.articles?.articles.map((article) => <ArticlePreview article={article} />)}</ul>
+                <ul>{articlesState.articles?.articles.map((article) => <ProfileArticlePreview article={article} userSession={userSession} />)}</ul>
               )}
             </div>
           )}
