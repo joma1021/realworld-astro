@@ -12,7 +12,7 @@ export async function getTags(): Promise<string[]> {
   return data.tags;
 }
 
-export async function getGlobalArticles(token?: string, page?: number, tag?: string): Promise<ArticlesDTO> {
+export async function getGlobalArticles(token?: string, page?: number, tag?: string): Promise<ArticlesDTO | null> {
   const offset = page ? (page - 1) * 10 : 0;
   const searchParams = tag
     ? new URLSearchParams({
@@ -31,13 +31,13 @@ export async function getGlobalArticles(token?: string, page?: number, tag?: str
     headers: setHeaders(token),
   });
   if (!response.ok) {
-    throw Error(response.statusText);
+    return null;
   }
   console.log("FETCH articles resolved");
   return await response.json();
 }
 
-export async function getYourArticles(token?: string, page?: number): Promise<ArticlesDTO> {
+export async function getYourArticles(token?: string, page?: number): Promise<ArticlesDTO | null> {
   const offset = page ? (page - 1) * 10 : 0;
   const searchParams = new URLSearchParams({
     limit: "10",
@@ -50,7 +50,7 @@ export async function getYourArticles(token?: string, page?: number): Promise<Ar
     headers: setHeaders(token),
   });
   if (!response.ok) {
-    throw Error(response.statusText);
+    return null;
   }
   console.log("FETCH articles resolved");
   return await response.json();
