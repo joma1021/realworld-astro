@@ -11,6 +11,6 @@ services:
       dockerfile: ./Dockerfile
     image: realworld-astro
     ports:
-      - "4321:4321"
+      - "3000:4321"
     depends_on:
       - "realworld-backend"
