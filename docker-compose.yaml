@@ -1,0 +1,16 @@
+services:
+  realworld-backend:
+    build:
+      dockerfile: ./Dockerfile
+    image: realworld-backend
+    ports:
+      - "8080:8080"
+
+  realworld-astro:
+    build:
+      dockerfile: ./Dockerfile
+    image: realworld-astro
+    ports:
+      - "4321:4321"
+    depends_on:
+      - "realworld-backend"
