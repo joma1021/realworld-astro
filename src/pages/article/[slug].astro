@@ -43,12 +43,12 @@ if (Astro.request.method === "POST") {
             <h1>{article.title}</h1>
 
             <div class="article-meta">
-              <a href={`/profile/${article.author.username}/articles`}>
+              <a href={`/profile/${article.author.username}`}>
                 <img src={article.author.image} />
               </a>
 
               <div class="info">
-                <a href={`/profile/${article.author.username}/articles`} class="author">
+                <a href={`/profile/${article.author.username}`} class="author">
                   {article.author.username}
                 </a>
                 <span class="date">{article.createdAt}</span>
@@ -93,11 +93,11 @@ if (Astro.request.method === "POST") {
 
           <div class="article-actions">
             <div class="article-meta">
-              <a href={`/profile/${article.author.username}/articles`}>
+              <a href={`/profile/${article.author.username}`}>
                 <img src={article.author.image} />
               </a>
               <div class="info">
-                <a href={`/profile/${article.author.username}/articles`} class="author">
+                <a href={`/profile/${article.author.username}`} class="author">
                   {article.author.username}
                 </a>
                 <span class="date">{article.createdAt}</span>
