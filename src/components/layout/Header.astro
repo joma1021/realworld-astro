@@ -10,27 +10,27 @@ const userSession = getUserSessionData(Astro.cookies);
     <a class="navbar-brand" href="/">conduit</a>
     <ul class="nav navbar-nav pull-xs-right">
       <li class="nav-item">
-        <a class={`nav-link ${currentPath == "/" ? "active" : ""}`} href="/">Home</a>
+        <a class={`nav-link ${currentPath == "/" ? "active" : ""}`} href="/" id="home">Home</a>
       </li>
       {userSession.isLoggedIn ? (        
       <li class="nav-item">
-        <a class="nav-link" href="/editor"> <i class="ion-compose"></i>&nbsp;New Article </a>
+        <a class="nav-link" href="/editor" id="editor"> <i class="ion-compose"></i>&nbsp;New Article </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="/settings"> <i class="ion-gear-a"></i>&nbsp;Settings </a>
+        <a class="nav-link" href="/settings"id="settings"> <i class="ion-gear-a"></i>&nbsp;Settings </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href={"/profile/"+userSession.username}>
+        <a class="nav-link" href={"/profile/"+userSession.username}id="profile">
           <img src={userSession.image} class="user-pic" />
           {userSession.username}
         </a>
       </li>
       ) : (
       <li class="nav-item">
-        <a class={`nav-link ${currentPath == "/login" ? "active" : ""}`} href="/login">Sign in</a>
+        <a class={`nav-link ${currentPath == "/login" ? "active" : ""}`} href="/login" id="login">Sign in</a>
       </li>
       <li class="nav-item">
-        <a class={`nav-link ${currentPath == "/register" ? "active" : ""}`} href="/register">Sign up</a>
+        <a class={`nav-link ${currentPath == "/register" ? "active" : ""}`} href="/register" id="register">Sign up</a>
       </li>)
     }
     </ul>
