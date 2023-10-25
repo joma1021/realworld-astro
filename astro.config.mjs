@@ -7,6 +7,6 @@ export default defineConfig({
   integrations: [preact({ compat: true })],
   output: "server",
   adapter: node({
-    mode: "standalone",
+    mode: "middleware",
   }),
 });
