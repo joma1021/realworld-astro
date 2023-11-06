@@ -7,12 +7,12 @@ export default function FollowActionButton({ following, username, userSession }:
 
   const handleOnClick = async () => {
     if (isFollowing) {
-      const response = await unfollowUser(userSession.token, username);
+      const response = await unfollowUser(username, userSession.token);
       if (response.ok) {
         setIsFollowing(false);
       }
     } else {
-      const response = await followUser(userSession.token, username);
+      const response = await followUser(username, userSession.token);
       if (response.ok) {
         setIsFollowing(true);
       }
