@@ -1,14 +1,12 @@
 import { defineConfig } from "astro/config";
 import preact from "@astrojs/preact";
-import node from "@astrojs/node";
+import vercel from "@astrojs/vercel";
 
 // https://astro.build/config
 export default defineConfig({
   integrations: [preact({ compat: true })],
   output: "server",
-  adapter: node({
-    mode: "standalone",
-  }),
+  adapter: vercel(),
   vite: {
     css: {
       // Legacy Conduit/Bootstrap CSS contains IE-only @media (min-width: 0\0) hacks
