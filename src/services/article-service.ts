@@ -1,15 +1,32 @@
-import { BASE_URL } from "../common/api";
+import { BASE_URL, resolveImage } from "../common/api";
 import { setHeaders } from "../common/headers";
 import type { ArticleData, ArticlesDTO, EditArticleData } from "../models/article";
 
+function normalizeArticle(article: ArticleData): ArticleData {
+  return {
+    ...article,
+    author: {
+      ...article.author,
+      image: resolveImage(article.author.image),
+      bio: article.author.bio ?? "",
+    },
+  };
+}
+
+function normalizeArticles(data: ArticlesDTO): ArticlesDTO {
+  return {
+    articlesCount: data.articlesCount,
+    articles: (data.articles ?? []).map(normalizeArticle),
+  };
+}
+
 export async function getTags(): Promise<string[]> {
-  const response = await fetch(`${BASE_URL}/tags`, { method: "GET" });
+  const response = await fetch(`${BASE_URL}/tags`, { method: "GET", headers: setHeaders() });
   if (!response.ok) {
     return [];
   }
-  console.log("FETCH tags resolved");
   const data = await response.json();
-  return data.tags;
+  return data.tags ?? [];
 }
 
 export async function getGlobalArticles(token?: string, page?: number, tag?: string): Promise<ArticlesDTO | null> {
@@ -24,7 +41,6 @@ export async function getGlobalArticles(token?: string, page?: number, tag?: str
         limit: "10",
         offset: `${offset}`,
       });
-  console.log("FETCH", `${BASE_URL}/articles?` + searchParams);
 
   const response = await fetch(`${BASE_URL}/articles?` + searchParams, {
     method: "GET",
@@ -33,8 +49,7 @@ export async function getGlobalArticles(token?: string, page?: number, tag?: str
   if (!response.ok) {
     return null;
   }
-  console.log("FETCH articles resolved");
-  return await response.json();
+  return normalizeArticles(await response.json());
 }
 
 export async function getYourArticles(token?: string, page?: number): Promise<ArticlesDTO | null> {
@@ -43,7 +58,6 @@ export async function getYourArticles(token?: string, page?: number): Promise<Ar
     limit: "10",
     offset: `${offset}`,
   });
-  console.log("FETCH", `${BASE_URL}/articles/feed?` + searchParams);
 
   const response = await fetch(`${BASE_URL}/articles/feed?` + searchParams, {
     method: "GET",
@@ -52,8 +66,7 @@ export async function getYourArticles(token?: string, page?: number): Promise<Ar
   if (!response.ok) {
     return null;
   }
-  console.log("FETCH articles resolved");
-  return await response.json();
+  return normalizeArticles(await response.json());
 }
 
 export async function getProfileArticles(username: string, tab: string, token?: string, page?: number): Promise<ArticlesDTO> {
@@ -72,8 +85,6 @@ export async function getProfileArticles(username: string, tab: string, token?: 
           author: username,
         });
 
-  console.log("FETCH", `${BASE_URL}/articles?` + searchParams);
-
   const response = await fetch(`${BASE_URL}/articles?` + searchParams, {
     method: "GET",
     headers: setHeaders(token),
@@ -81,13 +92,10 @@ export async function getProfileArticles(username: string, tab: string, token?: 
   if (!response.ok) {
     throw Error(response.statusText);
   }
-  console.log("FETCH articles resolved");
-  return await response.json();
+  return normalizeArticles(await response.json());
 }
 
 export async function getArticle(slug: string, token?: string): Promise<ArticleData | null> {
-  console.log("FETCH", `${BASE_URL}/articles/${slug}`);
-
   const response = await fetch(`${BASE_URL}/articles/${slug}`, {
     method: "GET",
     headers: setHeaders(token),
@@ -95,9 +103,8 @@ export async function getArticle(slug: string, token?: string): Promise<ArticleD
   if (!response.ok) {
     return null;
   }
-  console.log("FETCH article resolved");
   const data = await response.json();
-  return data.article;
+  return data.article ? normalizeArticle(data.article) : null;
 }
 
 export async function createArticle(article: EditArticleData, token?: string): Promise<Response> {

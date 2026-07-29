@@ -1,6 +1,7 @@
 ---
 import Layout from "../../Layout.astro";
 import { validateInput } from "../../common/helpers";
+import { parseApiErrors } from "../../common/headers";
 import { getCurrentUser, updateUser } from "../../services/auth-service";
 import FormError from "../../components/errors/FormError.astro";
 import { getUserSessionData, logout, setSessionCookies } from "../../services/session-service";
@@ -40,13 +41,9 @@ if (Astro.request.method === "POST") {
         hasError.errors = { "": ["email can't be blank"] };
       }
 
-      if (!validateInput(image)) {
-        hasError.errors = { "": ["image can't be blank"] };
-      }
-
       const user: UpdateUser = {
         username: username as string,
-        image: image as string,
+        image: (image as string) || "",
         email: email as string,
       };
 
@@ -56,7 +53,7 @@ if (Astro.request.method === "POST") {
       const response = await updateUser(user, userSession.token);
 
       if (!response.ok) {
-        hasError.errors = { [""]: ["Unknown error"] };
+        hasError.errors = await parseApiErrors(response);
       } else {
         const data = await response.json();
         setSessionCookies({
@@ -65,7 +62,6 @@ if (Astro.request.method === "POST") {
           image: data.user.image,
           cookies: Astro.cookies,
         });
-        console.log("Update current user successful");
         return Astro.redirect("/");
       }
     } catch (error) {

@@ -1,7 +1,15 @@
-import { BASE_URL } from "../common/api";
+import { BASE_URL, resolveImage } from "../common/api";
 import { setHeaders } from "../common/headers";
 import type { LoginCredentials, RegisterCredentials } from "../models/auth";
 import type { UpdateUser, UserData } from "../models/user";
+
+function normalizeUser(user: UserData): UserData {
+  return {
+    ...user,
+    bio: user.bio ?? "",
+    image: resolveImage(user.image),
+  };
+}
 
 export async function login(credentials: LoginCredentials) {
   return fetch(`${BASE_URL}/users/login`, {
@@ -18,16 +26,19 @@ export async function register(credentials: RegisterCredentials) {
     body: JSON.stringify({ user: credentials }),
   });
 }
+
 export async function getCurrentUser(token?: string): Promise<UserData | null> {
-  return fetch(`${BASE_URL}/user`, {
-    method: "GET",
-    headers: setHeaders(token),
-  })
-    .then((res) => res.json())
-    .then((res) => res.user)
-    .catch(() => {
-      return null;
+  try {
+    const response = await fetch(`${BASE_URL}/user`, {
+      method: "GET",
+      headers: setHeaders(token),
     });
+    if (!response.ok) return null;
+    const data = await response.json();
+    return data.user ? normalizeUser(data.user) : null;
+  } catch {
+    return null;
+  }
 }
 
 export async function updateUser(user: UpdateUser, token?: string) {

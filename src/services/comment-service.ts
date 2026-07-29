@@ -1,10 +1,19 @@
-import { BASE_URL } from "../common/api";
+import { BASE_URL, resolveImage } from "../common/api";
 import { setHeaders } from "../common/headers";
 import type { CommentData } from "../models/comment";
 
-export async function getComments(slug: string, token?: string): Promise<CommentData[]> {
-  console.log("FETCH", `${BASE_URL}/articles/${slug}/comments`);
+function normalizeComment(comment: CommentData): CommentData {
+  return {
+    ...comment,
+    author: {
+      ...comment.author,
+      image: resolveImage(comment.author.image),
+      bio: comment.author.bio ?? "",
+    },
+  };
+}
 
+export async function getComments(slug: string, token?: string): Promise<CommentData[]> {
   const response = await fetch(`${BASE_URL}/articles/${slug}/comments`, {
     method: "GET",
     headers: setHeaders(token),
@@ -12,9 +21,8 @@ export async function getComments(slug: string, token?: string): Promise<Comment
   if (!response.ok) {
     throw Error(response.statusText);
   }
-  console.log("FETCH comments resolved");
   const data = await response.json();
-  return data.comments;
+  return (data.comments ?? []).map(normalizeComment);
 }
 
 export async function createComment(slug: string, body: string, token?: string): Promise<Response> {
