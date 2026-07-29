@@ -6,31 +6,64 @@ const TOKEN_KEY = "authToken";
 const IMAGE_KEY = "userImage";
 const COOKIE_KEY = "userSession";
 
-export function getUserSessionData(cookies: AstroCookies): UserSessionData {
-  const sessionCookies = cookies.get(COOKIE_KEY)?.json();
+type SessionCookiePayload = {
+  [TOKEN_KEY]?: string;
+  [USERNAME_KEY]?: string;
+  [IMAGE_KEY]?: string;
+  // Legacy keys written by older builds (identifier names, not constant values)
+  TOKEN_KEY?: string;
+  USERNAME_KEY?: string;
+  IMAGE_KEY?: string;
+};
 
-  if (!sessionCookies) return { username: "", image: "", token: "", isLoggedIn: false };
-  const token = sessionCookies.TOKEN_KEY;
-  const username = sessionCookies.USERNAME_KEY;
-  const image = sessionCookies.IMAGE_KEY;
-  if (username && token) return { username: username, image: image, token: token, isLoggedIn: true };
-  else {
-    return { username: "", image: "", token: "", isLoggedIn: false };
+function readSession(cookies: AstroCookies): SessionCookiePayload | undefined {
+  return cookies.get(COOKIE_KEY)?.json() as SessionCookiePayload | undefined;
+}
+
+function resolveSession(sessionCookies: SessionCookiePayload | undefined) {
+  if (!sessionCookies) {
+    return { username: "", image: "", token: "", isLoggedIn: false as const };
   }
+
+  const token = sessionCookies[TOKEN_KEY] ?? sessionCookies.TOKEN_KEY ?? "";
+  const username = sessionCookies[USERNAME_KEY] ?? sessionCookies.USERNAME_KEY ?? "";
+  const image = sessionCookies[IMAGE_KEY] ?? sessionCookies.IMAGE_KEY ?? "";
+
+  if (username && token) {
+    return { username, image, token, isLoggedIn: true as const };
+  }
+
+  return { username: "", image: "", token: "", isLoggedIn: false as const };
+}
+
+export function getUserSessionData(cookies: AstroCookies): UserSessionData {
+  return resolveSession(readSession(cookies));
 }
 
 export function getToken(cookies: AstroCookies) {
-  const sessionCookies = cookies.get(COOKIE_KEY)?.json();
-  const token = sessionCookies[TOKEN_KEY];
-  return token;
+  return resolveSession(readSession(cookies)).token || undefined;
 }
 
-export function setSessionCookies({ username, authToken, image, cookies }: { username: string; authToken: string; image: string; cookies: AstroCookies }) {
+export function setSessionCookies({
+  username,
+  authToken,
+  image,
+  cookies,
+}: {
+  username: string;
+  authToken: string;
+  image: string;
+  cookies: AstroCookies;
+}) {
   const cookieOptions = { httpOnly: true, maxAge: 60 * 60 * 24, path: "/" };
-  const userSession = JSON.stringify({ TOKEN_KEY: authToken, USERNAME_KEY: username, IMAGE_KEY: image });
-  cookies.set(COOKIE_KEY, userSession, cookieOptions);
+  const userSession = {
+    [TOKEN_KEY]: authToken,
+    [USERNAME_KEY]: username,
+    [IMAGE_KEY]: image,
+  };
+  cookies.set(COOKIE_KEY, JSON.stringify(userSession), cookieOptions);
 }
 
 export function logout(cookies: AstroCookies) {
-  cookies.delete(COOKIE_KEY);
+  cookies.delete(COOKIE_KEY, { path: "/" });
 }

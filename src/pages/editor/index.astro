@@ -51,8 +51,7 @@ if (Astro.request.method === "POST") {
         hasError.errors = { [""]: ["Unknown error"] };
       }
     } else {
-      const data = await response.json();
-      return Astro.redirect(`/article/${data.article.slug}`);
+      return Astro.redirect(`/article/${(await response.json()).article.slug}`);
     }
   } catch (error) {
     hasError.errors = { "": ["Unknown error"] };

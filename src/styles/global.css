@@ -4317,24 +4317,7 @@ base::-moz-progress-bar,
   background-color: #eee;
   border-radius: 0.25rem;
 }
-@media screen and (min-width: 0\0) {
-  .progress {
-    background-color: #eee;
-    border-radius: 0.25rem;
-  }
-  .progress-bar {
-    display: inline-block;
-    height: 1rem;
-    text-indent: -999rem;
-    background-color: #0074d9;
-    border-bottom-left-radius: 0.25rem;
-    border-top-left-radius: 0.25rem;
-  }
-  .progress[width="100%"] {
-    border-bottom-right-radius: 0.25rem;
-    border-top-right-radius: 0.25rem;
-  }
-}
+
 .progress-striped[value]::-webkit-progress-value {
   background-image: linear-gradient(
     45deg,
@@ -4374,32 +4357,14 @@ base::-moz-progress-bar,
   );
   background-size: 1rem 1rem;
 }
-@media screen and (min-width: 0\0) {
-  .progress-bar-striped {
-    background-image: linear-gradient(
-      45deg,
-      rgba(255, 255, 255, 0.15) 25%,
-      transparent 25%,
-      transparent 50%,
-      rgba(255, 255, 255, 0.15) 50%,
-      rgba(255, 255, 255, 0.15) 75%,
-      transparent 75%,
-      transparent
-    );
-    background-size: 1rem 1rem;
-  }
-}
+
 .progress-animated[value]::-webkit-progress-value {
   animation: progress-bar-stripes 2s linear infinite;
 }
 .progress-animated[value]::-moz-progress-bar {
   animation: progress-bar-stripes 2s linear infinite;
 }
-@media screen and (min-width: 0\0) {
-  .progress-animated .progress-bar-striped {
-    animation: progress-bar-stripes 2s linear infinite;
-  }
-}
+
 .progress-success[value]::-webkit-progress-value {
   background-color: #5cb85c;
 }
@@ -4409,11 +4374,7 @@ base::-moz-progress-bar,
 .progress-success[value]::-ms-fill {
   background-color: #5cb85c;
 }
-@media screen and (min-width: 0\0) {
-  .progress-success .progress-bar {
-    background-color: #5cb85c;
-  }
-}
+
 .progress-info[value]::-webkit-progress-value {
   background-color: #5bc0de;
 }
@@ -4423,11 +4384,7 @@ base::-moz-progress-bar,
 .progress-info[value]::-ms-fill {
   background-color: #5bc0de;
 }
-@media screen and (min-width: 0\0) {
-  .progress-info .progress-bar {
-    background-color: #5bc0de;
-  }
-}
+
 .progress-warning[value]::-webkit-progress-value {
   background-color: #f0ad4e;
 }
@@ -4437,11 +4394,7 @@ base::-moz-progress-bar,
 .progress-warning[value]::-ms-fill {
   background-color: #f0ad4e;
 }
-@media screen and (min-width: 0\0) {
-  .progress-warning .progress-bar {
-    background-color: #f0ad4e;
-  }
-}
+
 .progress-danger[value]::-webkit-progress-value {
   background-color: #b85c5c;
 }
@@ -4451,11 +4404,7 @@ base::-moz-progress-bar,
 .progress-danger[value]::-ms-fill {
   background-color: #b85c5c;
 }
-@media screen and (min-width: 0\0) {
-  .progress-danger .progress-bar {
-    background-color: #b85c5c;
-  }
-}
+
 .media {
   display: flex;
   margin-bottom: 1rem;

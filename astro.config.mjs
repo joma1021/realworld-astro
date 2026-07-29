@@ -9,4 +9,13 @@ export default defineConfig({
   adapter: node({
     mode: "standalone",
   }),
+  vite: {
+    css: {
+      // Legacy Conduit/Bootstrap CSS contains IE-only @media (min-width: 0\0) hacks
+      // that Lightning CSS (Vite 8 / Astro 7 default minifier) rejects.
+      lightningcss: {
+        errorRecovery: true,
+      },
+    },
+  },
 });
