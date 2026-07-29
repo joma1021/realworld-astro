@@ -11,8 +11,8 @@
     "check": "astro check"
   },
   "dependencies": {
-    "@astrojs/node": "^11.0.3",
     "@astrojs/preact": "^6.0.2",
+    "@astrojs/vercel": "^11.0.4",
     "@nanostores/preact": "^1.1.0",
     "astro": "^7.1.5",
     "nanostores": "^1.4.2",
@@ -29,5 +29,8 @@
   },
   "engines": {
     "node": ">=22.12.0"
+  },
+  "overrides": {
+    "path-to-regexp": "^6.3.0"
   }
 }
