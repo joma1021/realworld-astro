@@ -1,6 +1,7 @@
 ---
 import Layout from "../../Layout.astro";
 import { validateInput } from "../../common/helpers";
+import { parseApiErrors } from "../../common/headers";
 import EditorForm from "../../components/editor/EditorForm";
 import FormError from "../../components/errors/FormError.astro";
 import type { EditArticleData } from "../../models/article";
@@ -44,12 +45,7 @@ if (Astro.request.method === "POST") {
     const response = await createArticle(editArticle, userSession.token);
 
     if (!response.ok) {
-      if (response.status == 422) {
-        const data = await response.json();
-        data.status == "error" ? (hasError.errors = { ["Error: "]: [data.message] }) : (hasError.errors = data.errors);
-      } else {
-        hasError.errors = { [""]: ["Unknown error"] };
-      }
+      hasError.errors = await parseApiErrors(response);
     } else {
       return Astro.redirect(`/article/${(await response.json()).article.slug}`);
     }

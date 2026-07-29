@@ -1,4 +1,5 @@
 import type { AstroCookies } from "astro";
+import { resolveImage } from "../common/api";
 import type { UserSessionData } from "../models/user";
 
 const USERNAME_KEY = "username";
@@ -20,20 +21,20 @@ function readSession(cookies: AstroCookies): SessionCookiePayload | undefined {
   return cookies.get(COOKIE_KEY)?.json() as SessionCookiePayload | undefined;
 }
 
-function resolveSession(sessionCookies: SessionCookiePayload | undefined) {
+function resolveSession(sessionCookies: SessionCookiePayload | undefined): UserSessionData {
   if (!sessionCookies) {
-    return { username: "", image: "", token: "", isLoggedIn: false as const };
+    return { username: "", image: "", token: "", isLoggedIn: false };
   }
 
   const token = sessionCookies[TOKEN_KEY] ?? sessionCookies.TOKEN_KEY ?? "";
   const username = sessionCookies[USERNAME_KEY] ?? sessionCookies.USERNAME_KEY ?? "";
-  const image = sessionCookies[IMAGE_KEY] ?? sessionCookies.IMAGE_KEY ?? "";
+  const image = resolveImage(sessionCookies[IMAGE_KEY] ?? sessionCookies.IMAGE_KEY);
 
   if (username && token) {
-    return { username, image, token, isLoggedIn: true as const };
+    return { username, image, token, isLoggedIn: true };
   }
 
-  return { username: "", image: "", token: "", isLoggedIn: false as const };
+  return { username: "", image: "", token: "", isLoggedIn: false };
 }
 
 export function getUserSessionData(cookies: AstroCookies): UserSessionData {
@@ -52,14 +53,14 @@ export function setSessionCookies({
 }: {
   username: string;
   authToken: string;
-  image: string;
+  image?: string | null;
   cookies: AstroCookies;
 }) {
   const cookieOptions = { httpOnly: true, maxAge: 60 * 60 * 24, path: "/" };
   const userSession = {
     [TOKEN_KEY]: authToken,
     [USERNAME_KEY]: username,
-    [IMAGE_KEY]: image,
+    [IMAGE_KEY]: resolveImage(image),
   };
   cookies.set(COOKIE_KEY, JSON.stringify(userSession), cookieOptions);
 }

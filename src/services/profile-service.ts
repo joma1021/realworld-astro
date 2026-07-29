@@ -1,23 +1,27 @@
-import { BASE_URL } from "../common/api";
+import { BASE_URL, resolveImage } from "../common/api";
 import { setHeaders } from "../common/headers";
 import type { AuthorData } from "../models/author";
 
+function normalizeProfile(profile: AuthorData): AuthorData {
+  return {
+    ...profile,
+    image: resolveImage(profile.image),
+    bio: profile.bio ?? "",
+  };
+}
+
 export async function getProfile(username: string, token?: string): Promise<AuthorData | null> {
-  console.log("FETCH", `${BASE_URL}/profiles/${username}`);
   try {
     const response = await fetch(`${BASE_URL}/profiles/${username}`, {
       method: "GET",
-
       headers: setHeaders(token),
     });
     if (!response.ok) {
       return null;
     }
-    console.log("FETCH profile resolved");
-
     const data = await response.json();
-    return data.profile;
-  } catch (e) {
+    return data.profile ? normalizeProfile(data.profile) : null;
+  } catch {
     return Promise.reject("Error occurred while fetching data");
   }
 }
