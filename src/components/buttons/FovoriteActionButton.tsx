@@ -1,6 +1,5 @@
 import { useState } from "preact/hooks";
 import { favoriteArticle, unfavoriteArticle } from "../../services/article-service";
-import { useStore } from "@nanostores/preact";
 import type { UserSessionData } from "../../models/user";
 
 interface FavoriteState {
